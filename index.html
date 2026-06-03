@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>InoWiFi Voucher | Portal Captive</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            background: radial-gradient(ellipse at 20% 30%, #0a0f2a, #03050b);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            background: linear-gradient(125deg, #0f172a, #1e1b4b, #0f172a);
+            background-size: 200% 200%;
+            animation: gradientShift 12s ease infinite;
+        }
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+        .particle {
+            position: absolute;
+            background: rgba(0, 255, 255, 0.3);
+            border-radius: 50%;
+            filter: blur(2px);
+            animation: float 15s infinite linear;
+        }
+        @keyframes float {
+            0% { transform: translateY(100vh) scale(0); opacity: 0; }
+            20% { opacity: 0.6; }
+            80% { opacity: 0.6; }
+            100% { transform: translateY(-20vh) scale(1); opacity: 0; }
+        }
+        .portal-card {
+            position: relative;
+            z-index: 10;
+            max-width: 500px;
+            width: 100%;
+            background: rgba(15, 25, 45, 0.55);
+            backdrop-filter: blur(14px);
+            border-radius: 48px;
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            box-shadow: 0 25px 45px rgba(0,0,0,0.3), 0 0 20px rgba(0,255,255,0.2);
+            padding: 32px 28px;
+            transition: transform 0.3s ease;
+        }
+        .brand {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+        .logo-icon {
+            font-size: 3.2rem;
+            background: linear-gradient(135deg, #0ff, #a0f);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .brand h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff, #0ff, #c0a0ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-top: 8px;
+        }
+        .ino-badge {
+            display: inline-block;
+            background: rgba(0, 255, 255, 0.15);
+            border-radius: 40px;
+            padding: 4px 16px;
+            font-size: 0.7rem;
+            color: #0ff;
+            border: 1px solid #0ff6;
+            margin-top: 12px;
+            font-weight: 600;
+        }
+        .wifi-status {
+            background: rgba(0,0,0,0.4);
+            border-radius: 60px;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 28px;
+            border: 1px solid #0ff3;
+        }
+        .wifi-status span i { color: #0ff; margin-right: 8px; }
+        .signal-strength { color: #0f0; font-weight: 600; }
+        .input-group { margin-bottom: 24px; }
+        .input-group label {
+            display: block;
+            color: #ccddf8;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+        .input-group i { margin-right: 8px; color: #0ff; }
+        input {
+            width: 100%;
+            padding: 14px 18px;
+            background: rgba(0, 0, 0, 0.55);
+            border: 1px solid #0ff6;
+            border-radius: 60px;
+            color: white;
+            font-size: 1rem;
+            text-align: center;
+            letter-spacing: 2px;
+            outline: none;
+        }
+        input:focus {
+            border-color: #0ff;
+            box-shadow: 0 0 12px #0ff;
+        }
+        button {
+            width: 100%;
+            background: linear-gradient(95deg, #0ff, #a0f);
+            border: none;
+            padding: 14px;
+            border-radius: 60px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            color: #000;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-top: 8px;
+        }
+        button:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 18px #0ff;
+        }
+        .voucher-info {
+            background: rgba(0, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 12px;
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.75rem;
+            color: #8aaee0;
+            border: 1px dashed #0ff4;
+        }
+        .voucher-info span { color: #0ff; font-weight: bold; }
+        .footer {
+            text-align: center;
+            margin-top: 32px;
+            font-size: 0.7rem;
+            color: #6c86a3;
+        }
+        .footer a { color: #0ff; text-decoration: none; }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background: #0f1925cc;
+            border-radius: 32px;
+            padding: 32px;
+            text-align: center;
+            border: 1px solid #0ff;
+            max-width: 90%;
+            width: 400px;
+            box-shadow: 0 0 40px #0ff4;
+        }
+        .modal-content i {
+            font-size: 4rem;
+            color: #0ff;
+            margin-bottom: 16px;
+        }
+        .modal-content h3 {
+            color: #fff;
+            margin-bottom: 12px;
+        }
+        .modal-content p {
+            color: #ccddf8;
+            margin-bottom: 24px;
+        }
+        .modal-content button {
+            width: auto;
+            padding: 10px 24px;
+            margin: 0 8px;
+        }
+        @media (max-width: 500px) {
+            .portal-card { padding: 24px 20px; }
+            .brand h1 { font-size: 1.7rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="animated-bg"></div>
+<div class="particles" id="particles"></div>
+
+<div class="portal-card" id="portalCard">
+    <div class="brand">
+        <i class="fas fa-ticket-alt logo-icon"></i>
+        <h1>InoWiFi Voucher</h1>
+        <div class="ino-badge">✦ powered by InoNet ✦</div>
+        <p style="margin-top: 12px;">Masukkan kode voucher untuk akses internet</p>
+    </div>
+    <div class="wifi-status">
+        <span><i class="fas fa-network-wired"></i> Ino_Public_Voucher</span>
+        <span class="signal-strength"><i class="fas fa-signal"></i> High Speed</span>
+    </div>
+    <form id="voucherForm">
+        <div class="input-group">
+            <label><i class="fas fa-qrcode"></i> Kode Voucher</label>
+            <input type="text" id="voucherCode" placeholder="Contoh: INO2025" required autocomplete="off">
+        </div>
+        <button type="submit"><i class="fas fa-wifi"></i> Aktifkan Voucher</button>
+    </form>
+    <div class="voucher-info">
+        <i class="fas fa-info-circle"></i> Voucher demo: <span>INO2025</span> , <span>WIFIGRATIS</span> , <span>INONET</span>
+    </div>
+    <div class="footer">
+        <i class="fas fa-shield-alt"></i> Protected by InoSecure • <a href="#" id="termsLink">Syarat & Ketentuan</a>
+    </div>
+</div>
+
+<div id="successModal" class="modal">
+    <div class="modal-content">
+        <i class="fas fa-check-circle"></i>
+        <h3>✅ Koneksi Berhasil!</h3>
+        <p>WiFi InoWiFi telah tersambung. Anda sekarang dapat berselancar di internet.</p>
+        <button id="closeModalBtn"><i class="fas fa-globe"></i> Mulai Browsing</button>
+    </div>
+</div>
+
+<script>
+    // Generate floating particles
+    function createParticles() {
+        const container = document.getElementById('particles');
+        for (let i = 0; i < 45; i++) {
+            const particle = document.createElement('div');
+            particle.classList.add('particle');
+            const size = Math.random() * 8 + 2;
+            particle.style.width = `${size}px`;
+            particle.style.height = `${size}px`;
+            particle.style.left = `${Math.random() * 100}%`;
+            particle.style.animationDuration = `${Math.random() * 12 + 8}s`;
+            particle.style.animationDelay = `${Math.random() * 10}s`;
+            particle.style.opacity = Math.random() * 0.5;
+            container.appendChild(particle);
+        }
+    }
+    createParticles();
+
+    let usedVouchers = JSON.parse(localStorage.getItem('ino_voucher_used') || '[]');
+    let isConnected = localStorage.getItem('ino_wifi_connected') === 'true';
+
+    function isValidVoucher(code) {
+        const valid = ['INO2025', 'WIFIGRATIS', 'INONET', 'FREEWIFI', 'INODAY'];
+        return valid.includes(code.toUpperCase());
+    }
+
+    function isVoucherUsed(code) {
+        return usedVouchers.includes(code.toUpperCase());
+    }
+
+    function markVoucherUsed(code) {
+        if (!isVoucherUsed(code)) {
+            usedVouchers.push(code.toUpperCase());
+            localStorage.setItem('ino_voucher_used', JSON.stringify(usedVouchers));
+        }
+    }
+
+    // Simpan status koneksi
+    function setConnected() {
+        localStorage.setItem('ino_wifi_connected', 'true');
+        isConnected = true;
+    }
+
+    // Tampilkan modal sukses
+    function showSuccessModal() {
+        const modal = document.getElementById('successModal');
+        modal.style.display = 'flex';
+        // Setelah modal ditutup, user bisa browsing
+        document.getElementById('closeModalBtn').onclick = () => {
+            modal.style.display = 'none';
+            // Redirect ke Google (atau halaman bebas)
+            window.location.href = "https://www.google.com";
+        };
+        // Juga bisa klik di luar modal? tidak perlu, tapi biar user pilih tombol.
+    }
+
+    function handleVoucher(code) {
+        const upper = code.toUpperCase();
+        if (!isValidVoucher(upper)) {
+            alert('❌ Kode voucher tidak valid!');
+            return false;
+        }
+        if (isVoucherUsed(upper)) {
+            alert('❌ Voucher sudah pernah digunakan!');
+            return false;
+        }
+        // Voucher valid
+        markVoucherUsed(upper);
+        setConnected();
+        // Tampilkan popup sukses
+        showSuccessModal();
+        return true;
+    }
+
+    // Jika sudah terhubung sebelumnya, langsung tampilkan modal? Tidak, biarkan user lihat form tapi hint sudah terhubung.
+    // Tapi kita bisa sembunyikan form dan tampilkan pesan "Sudah terhubung"
+    function checkConnected() {
+        if (isConnected) {
+            // Ubah tampilan portal menjadi status connected
+            const card = document.getElementById('portalCard');
+            card.innerHTML = `
+                <div class="brand">
+                    <i class="fas fa-wifi logo-icon"></i>
+                    <h1>InoWiFi</h1>
+                    <div class="ino-badge">✦ Connected ✦</div>
+                </div>
+                <div class="wifi-status">
+                    <span><i class="fas fa-network-wired"></i> Ino_Public_Voucher</span>
+                    <span class="signal-strength"><i class="fas fa-signal"></i> Connected</span>
+                </div>
+                <div style="text-align:center; margin: 30px 0;">
+                    <i class="fas fa-check-circle" style="font-size: 3rem; color:#0ff;"></i>
+                    <p style="color:#fff; margin-top: 16px;">Anda sudah terhubung ke internet. Selamat berselancar!</p>
+                    <button id="browseBtn" style="width: auto; margin-top: 20px;"><i class="fas fa-globe"></i> Mulai Browsing</button>
+                </div>
+                <div class="footer">
+                    <i class="fas fa-shield-alt"></i> Protected by InoSecure
+                </div>
+            `;
+            document.getElementById('browseBtn')?.addEventListener('click', () => {
+                window.location.href = "https://www.google.com";
+            });
+        }
+    }
+
+    document.getElementById('voucherForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const voucher = document.getElementById('voucherCode').value.trim();
+        if (!voucher) {
+            alert('Masukkan kode voucher');
+            return;
+        }
+        const btn = document.querySelector('button[type="submit"]');
+        const original = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Memproses...';
+        btn.disabled = true;
+        setTimeout(() => {
+            handleVoucher(voucher);
+            btn.innerHTML = original;
+            btn.disabled = false;
+            document.getElementById('voucherCode').value = '';
+            // Jika berhasil, setelah modal ditutup, halaman akan redirect, tetapi kita juga bisa refresh status
+            if (isConnected) checkConnected();
+        }, 500);
+    });
+
+    document.getElementById('termsLink').addEventListener('click', (e) => {
+        e.preventDefault();
+        alert("📜 InoWiFi Voucher - Gunakan voucher yang sah. Setiap voucher hanya bisa dipakai sekali.");
+    });
+
+    // Cek apakah sudah pernah connect sebelumnya
+    checkConnected();
+</script>
+</body>
+</html>
