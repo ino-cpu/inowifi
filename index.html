@@ -337,7 +337,7 @@
   </div>
 
   <div class="suite-grid">
-    <!-- CARD 1: REACTION CHANNEL WHATSAPP (FIX CORS) -->
+    <!-- CARD 1: REACTION CHANNEL WHATSAPP (FIXED - PROXY + HEADER) -->
     <div class="card">
       <div class="card-header">
         <i class="fab fa-whatsapp"></i> <span>WA Channel Reactor <span class="badge-free">FREE BOT ARMY</span></span>
@@ -401,44 +401,57 @@
 </div>
 
 <script>
-  // ======================== 1. WHATSAPP REACTION API (CORS FIX - PROXY) ========================
+  // ======================== 1. WHATSAPP REACTION API (FIX 403 - PAKAI ALLORIGINS + USER-AGENT) ========================
   const REACT_API = "https://api-nanzz.my.id/api/tools/react-ch-free.php";
   const API_KEY = "nanasfree";
-  const CORS_PROXY = "https://corsproxy.io/?";  // Proxy gratis untuk bypass CORS
+  
+  // Proxy yang lebih aman dan tidak diblokir
+  const PROXY_LIST = [
+    "https://api.allorigins.win/raw?url=",
+    "https://cors-anywhere.herokuapp.com/",
+    "https://proxy.cors.sh/"
+  ];
 
   async function sendWhatsAppReaction(url, emojiChar) {
     if (!url || !url.includes("whatsapp.com/channel/")) {
       throw new Error("URL tidak valid! Pastikan link channel WhatsApp (contoh: https://whatsapp.com/channel/.../ID)");
     }
-    // Bangun URL asli
+    // Bangun target URL asli
     const targetUrl = `${REACT_API}?url=${encodeURIComponent(url)}&emoji=${encodeURIComponent(emojiChar)}&api-key=${API_KEY}`;
-    // Lewatkan proxy CORS
-    const proxiedUrl = CORS_PROXY + encodeURIComponent(targetUrl);
     
-    const response = await fetch(proxiedUrl, {
-      method: "GET",
-      headers: { "Accept": "application/json" }
-    });
-    
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status} - ${response.statusText}`);
-    }
-    const data = await response.json();
-    
-    // Beberapa proxy membungkus response, cek apakah ada properti 'contents'
-    let realData = data;
-    if (data.contents) {
+    // Coba setiap proxy sampai berhasil
+    let lastError = null;
+    for (const proxy of PROXY_LIST) {
       try {
-        realData = JSON.parse(data.contents);
-      } catch(e) {
-        throw new Error("Gagal parse response dari proxy");
+        const proxiedUrl = proxy + encodeURIComponent(targetUrl);
+        const response = await fetch(proxiedUrl, {
+          method: "GET",
+          headers: {
+            "Accept": "application/json",
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+          }
+        });
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+        let data = await response.json();
+        // Proxy allorigins mengembalikan response langsung (sudah parsed)
+        // Jika data memiliki property 'contents' (untuk proxy lain) maka parse
+        if (data.contents) {
+          data = JSON.parse(data.contents);
+        }
+        if (data.status === true || data.status === "true") {
+          return data;
+        } else {
+          throw new Error(data.message || "Reaction gagal dari server");
+        }
+      } catch (err) {
+        lastError = err;
+        console.warn(`Proxy ${proxy} gagal:`, err);
+        continue;
       }
     }
-    
-    if (realData.status !== true && realData.status !== "true") {
-      throw new Error(realData.message || "Reaction gagal dari server");
-    }
-    return realData;
+    throw new Error(lastError?.message || "Semua proxy gagal, coba lagi nanti");
   }
 
   // Emoji picker
@@ -474,14 +487,14 @@
       return;
     }
     reactResultDiv.style.display = "block";
-    reactResultDiv.innerHTML = `<div class="loading"></div> Mengirim reaksi ${selectedEmoji} ke bot army... (lewat proxy CORS)`;
+    reactResultDiv.innerHTML = `<div class="loading"></div> Mengirim reaksi ${selectedEmoji} ke bot army... (mencoba proxy)`;
     try {
       const result = await sendWhatsAppReaction(waUrl, selectedEmoji);
       let msg = result.message || "Reaction accepted!";
       let total = result.message?.match(/\d+/g)?.[0] || "77";
       reactResultDiv.innerHTML = `<i class="fas fa-check-circle" style="color:#0f0;"></i> ✅ SUCCESS: ${msg}<br>📡 URL: ${result.url || waUrl}<br>😀 Emoji: ${result.emoji || selectedEmoji}<br>🤖 ${total} reactions diproses.`;
     } catch (err) {
-      reactResultDiv.innerHTML = `<i class="fas fa-exclamation-triangle" style="color:#ff5555;"></i> ERROR: ${err.message}<br>⚠️ Pastikan link channel valid dan koneksi internet stabil.`;
+      reactResultDiv.innerHTML = `<i class="fas fa-exclamation-triangle" style="color:#ff5555;"></i> ERROR: ${err.message}<br>⚠️ Pastikan link channel valid dan coba lagi (server API mungkin sedang sibuk).`;
     }
   });
 
