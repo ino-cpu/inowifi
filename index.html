@@ -1,397 +1,609 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>InoWiFi Voucher | Portal Captive</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Inter', sans-serif;
-            min-height: 100vh;
-            background: radial-gradient(ellipse at 20% 30%, #0a0f2a, #03050b);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            position: relative;
-            overflow-x: hidden;
-        }
-        .animated-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
-            background: linear-gradient(125deg, #0f172a, #1e1b4b, #0f172a);
-            background-size: 200% 200%;
-            animation: gradientShift 12s ease infinite;
-        }
-        @keyframes gradientShift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-        .particles {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-            pointer-events: none;
-        }
-        .particle {
-            position: absolute;
-            background: rgba(0, 255, 255, 0.3);
-            border-radius: 50%;
-            filter: blur(2px);
-            animation: float 15s infinite linear;
-        }
-        @keyframes float {
-            0% { transform: translateY(100vh) scale(0); opacity: 0; }
-            20% { opacity: 0.6; }
-            80% { opacity: 0.6; }
-            100% { transform: translateY(-20vh) scale(1); opacity: 0; }
-        }
-        .portal-card {
-            position: relative;
-            z-index: 10;
-            max-width: 500px;
-            width: 100%;
-            background: rgba(15, 25, 45, 0.55);
-            backdrop-filter: blur(14px);
-            border-radius: 48px;
-            border: 1px solid rgba(0, 255, 255, 0.3);
-            box-shadow: 0 25px 45px rgba(0,0,0,0.3), 0 0 20px rgba(0,255,255,0.2);
-            padding: 32px 28px;
-            transition: transform 0.3s ease;
-        }
-        .brand {
-            text-align: center;
-            margin-bottom: 28px;
-        }
-        .logo-icon {
-            font-size: 3.2rem;
-            background: linear-gradient(135deg, #0ff, #a0f);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-        .brand h1 {
-            font-size: 2rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, #fff, #0ff, #c0a0ff);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            margin-top: 8px;
-        }
-        .ino-badge {
-            display: inline-block;
-            background: rgba(0, 255, 255, 0.15);
-            border-radius: 40px;
-            padding: 4px 16px;
-            font-size: 0.7rem;
-            color: #0ff;
-            border: 1px solid #0ff6;
-            margin-top: 12px;
-            font-weight: 600;
-        }
-        .wifi-status {
-            background: rgba(0,0,0,0.4);
-            border-radius: 60px;
-            padding: 10px 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 28px;
-            border: 1px solid #0ff3;
-        }
-        .wifi-status span i { color: #0ff; margin-right: 8px; }
-        .signal-strength { color: #0f0; font-weight: 600; }
-        .input-group { margin-bottom: 24px; }
-        .input-group label {
-            display: block;
-            color: #ccddf8;
-            font-weight: 500;
-            margin-bottom: 8px;
-        }
-        .input-group i { margin-right: 8px; color: #0ff; }
-        input {
-            width: 100%;
-            padding: 14px 18px;
-            background: rgba(0, 0, 0, 0.55);
-            border: 1px solid #0ff6;
-            border-radius: 60px;
-            color: white;
-            font-size: 1rem;
-            text-align: center;
-            letter-spacing: 2px;
-            outline: none;
-        }
-        input:focus {
-            border-color: #0ff;
-            box-shadow: 0 0 12px #0ff;
-        }
-        button {
-            width: 100%;
-            background: linear-gradient(95deg, #0ff, #a0f);
-            border: none;
-            padding: 14px;
-            border-radius: 60px;
-            font-weight: bold;
-            font-size: 1.1rem;
-            color: #000;
-            cursor: pointer;
-            transition: 0.2s;
-            margin-top: 8px;
-        }
-        button:hover {
-            transform: scale(1.02);
-            box-shadow: 0 0 18px #0ff;
-        }
-        .voucher-info {
-            background: rgba(0, 255, 255, 0.05);
-            border-radius: 20px;
-            padding: 12px;
-            text-align: center;
-            margin-top: 20px;
-            font-size: 0.75rem;
-            color: #8aaee0;
-            border: 1px dashed #0ff4;
-        }
-        .voucher-info span { color: #0ff; font-weight: bold; }
-        .footer {
-            text-align: center;
-            margin-top: 32px;
-            font-size: 0.7rem;
-            color: #6c86a3;
-        }
-        .footer a { color: #0ff; text-decoration: none; }
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.8);
-            backdrop-filter: blur(8px);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-        }
-        .modal-content {
-            background: #0f1925cc;
-            border-radius: 32px;
-            padding: 32px;
-            text-align: center;
-            border: 1px solid #0ff;
-            max-width: 90%;
-            width: 400px;
-            box-shadow: 0 0 40px #0ff4;
-        }
-        .modal-content i {
-            font-size: 4rem;
-            color: #0ff;
-            margin-bottom: 16px;
-        }
-        .modal-content h3 {
-            color: #fff;
-            margin-bottom: 12px;
-        }
-        .modal-content p {
-            color: #ccddf8;
-            margin-bottom: 24px;
-        }
-        .modal-content button {
-            width: auto;
-            padding: 10px 24px;
-            margin: 0 8px;
-        }
-        @media (max-width: 500px) {
-            .portal-card { padding: 24px 20px; }
-            .brand h1 { font-size: 1.7rem; }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>NEXUS | React + Downloader Suite</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700;14..32,800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: radial-gradient(circle at 20% 30%, #0a0a0f, #030304);
+      font-family: 'Inter', 'Space Grotesk', sans-serif;
+      color: #eef5ff;
+      min-height: 100vh;
+      padding: 2rem 1.5rem;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIj48ZmlsdGVyIGlkPSJmIj48ZmVUdXJidWxlbmNlIHR5cGU9ImZyYWN0YWxOb2lzZSIgYmFzZUZyZXF1ZW5jeT0iLjciIG51bU9jdGF2ZXM9IjMiLz48L2ZpbHRlcj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWx0ZXI9InVybCgjZikiIG9wYWNpdHk9IjAuMDMiLz48L3N2Zz4=');
+      background-repeat: repeat;
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0.25;
+    }
+
+    @keyframes pulseGlow {
+      0% { border-color: rgba(0, 255, 255, 0.3); box-shadow: 0 0 5px rgba(0, 255, 255, 0.2);}
+      100% { border-color: rgba(0, 255, 255, 0.8); box-shadow: 0 0 20px rgba(0, 255, 255, 0.6);}
+    }
+
+    .container {
+      max-width: 1350px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 5;
+    }
+
+    .cyber-header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+    .glitch {
+      font-size: 3.2rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #aaffff, #00e0ff, #7700ff);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow: 0 0 8px rgba(0,255,255,0.5);
+      position: relative;
+      display: inline-block;
+    }
+    .glitch::before, .glitch::after {
+      content: attr(data-text);
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #aaffff, #00e0ff, #7700ff);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .glitch::before {
+      animation: glitch-1 0.4s infinite reverse;
+      clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
+      transform: translate(-2px, -1px);
+      opacity: 0.8;
+    }
+    .glitch::after {
+      animation: glitch-2 0.3s infinite;
+      clip-path: polygon(0 80%, 100% 20%, 100% 100%, 0 100%);
+      transform: translate(2px, 1px);
+      opacity: 0.7;
+    }
+    @keyframes glitch-1 {
+      0% { transform: translate(0); }
+      20% { transform: translate(-2px, 1px); }
+      40% { transform: translate(2px, -1px); }
+      60% { transform: translate(-1px, 2px); }
+      80% { transform: translate(1px, -2px); }
+      100% { transform: translate(0); }
+    }
+    @keyframes glitch-2 {
+      0% { transform: translate(0); }
+      20% { transform: translate(2px, -1px); }
+      40% { transform: translate(-2px, 1px); }
+      60% { transform: translate(1px, 2px); }
+      80% { transform: translate(-1px, -2px); }
+      100% { transform: translate(0); }
+    }
+    .sub {
+      font-family: 'Space Grotesk', monospace;
+      color: #8aaaff;
+      border-left: 3px solid #0ff;
+      padding-left: 1rem;
+      margin-top: 0.5rem;
+      font-weight: 400;
+      letter-spacing: 1px;
+    }
+
+    .suite-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 2.5rem;
+    }
+    .card {
+      background: rgba(10, 20, 30, 0.65);
+      backdrop-filter: blur(12px);
+      border-radius: 2rem;
+      border: 1px solid rgba(0, 255, 255, 0.3);
+      box-shadow: 0 15px 35px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05);
+      transition: all 0.25s ease;
+      overflow: hidden;
+    }
+    .card:hover {
+      border-color: rgba(0, 255, 255, 0.7);
+      box-shadow: 0 20px 40px rgba(0, 200, 255, 0.2);
+    }
+    .card-header {
+      padding: 1.5rem 2rem;
+      background: rgba(0, 20, 30, 0.6);
+      border-bottom: 1px solid rgba(0, 255, 255, 0.3);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 700;
+      font-size: 1.5rem;
+    }
+    .card-header i {
+      color: #0ff;
+      font-size: 1.8rem;
+      filter: drop-shadow(0 0 5px cyan);
+    }
+    .card-body {
+      padding: 2rem;
+    }
+
+    .input-group {
+      margin-bottom: 1.5rem;
+    }
+    .input-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      color: #bbddff;
+    }
+    input, select, .emoji-picker-custom {
+      width: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      border: 1px solid #2c5f6e;
+      border-radius: 1.2rem;
+      padding: 0.9rem 1.2rem;
+      color: #fff;
+      font-size: 1rem;
+      font-family: monospace;
+      transition: 0.2s;
+    }
+    input:focus, select:focus {
+      outline: none;
+      border-color: #0ff;
+      box-shadow: 0 0 12px rgba(0, 255, 255, 0.4);
+    }
+    .dual-emoji {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .emoji-select {
+      flex: 2;
+    }
+    .custom-emoji {
+      flex: 1;
+      text-align: center;
+      font-size: 2rem;
+      background: #071a1f;
+      border-radius: 1.2rem;
+      padding: 0.5rem;
+      cursor: pointer;
+    }
+    button {
+      background: linear-gradient(95deg, #00a6c4, #2b2b9b);
+      border: none;
+      padding: 12px 24px;
+      border-radius: 2rem;
+      font-weight: 700;
+      font-size: 1rem;
+      color: white;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      cursor: pointer;
+      transition: 0.2s;
+      box-shadow: 0 4px 12px rgba(0, 160, 200, 0.3);
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+    button:hover {
+      transform: translateY(-2px);
+      filter: brightness(1.05);
+      box-shadow: 0 10px 20px rgba(0, 200, 255, 0.4);
+    }
+    button:active {
+      transform: translateY(1px);
+    }
+
+    .result-box {
+      margin-top: 1.5rem;
+      background: #010b0f80;
+      border-radius: 1.2rem;
+      padding: 1rem;
+      border-left: 4px solid #0ff;
+      font-size: 0.9rem;
+      word-break: break-word;
+      font-family: 'Fira Code', monospace;
+    }
+    .loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-radius: 50%;
+      border-top-color: cyan;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.8);
+      backdrop-filter: blur(16px);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-content {
+      background: rgba(8, 18, 28, 0.95);
+      border-radius: 2rem;
+      max-width: 600px;
+      width: 90%;
+      border: 1px solid cyan;
+      padding: 1.8rem;
+      box-shadow: 0 0 40px rgba(0,255,255,0.3);
+      animation: fadeUp 0.25s ease;
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px);}
+      to { opacity: 1; transform: translateY(0);}
+    }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid cyan;
+      padding-bottom: 0.8rem;
+      margin-bottom: 1.2rem;
+    }
+    .close-modal {
+      font-size: 1.8rem;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .close-modal:hover { color: red; text-shadow: 0 0 5px red; }
+    .download-list {
+      list-style: none;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+    .download-list li {
+      background: #0a1a22;
+      margin: 0.6rem 0;
+      padding: 0.8rem;
+      border-radius: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .btn-down {
+      background: #1f3a44;
+      padding: 6px 14px;
+      border-radius: 2rem;
+      font-size: 0.8rem;
+      text-decoration: none;
+      color: white;
+    }
+    .btn-down:hover { background: #0ff; color: black; }
+
+    @media (max-width: 680px) {
+      body { padding: 1rem; }
+      .card-body { padding: 1.2rem; }
+      .glitch { font-size: 2rem; }
+    }
+    .badge-free {
+      font-size: 0.7rem;
+      background: #0ff220;
+      color: #000;
+      border-radius: 30px;
+      padding: 2px 8px;
+      margin-left: 10px;
+      vertical-align: middle;
+    }
+    footer {
+      text-align: center;
+      margin-top: 3rem;
+      opacity: 0.6;
+      font-size: 0.8rem;
+    }
+  </style>
 </head>
 <body>
-<div class="animated-bg"></div>
-<div class="particles" id="particles"></div>
+<div class="container">
+  <div class="cyber-header">
+    <h1 class="glitch" data-text="NEXUS_HUB">NEXUS_HUB</h1>
+    <p class="sub">// REACTION ENGINE + UNIVERSAL DOWNLOADER // CYBER TOOLKIT</p>
+  </div>
 
-<div class="portal-card" id="portalCard">
-    <div class="brand">
-        <i class="fas fa-ticket-alt logo-icon"></i>
-        <h1>InoWiFi Voucher</h1>
-        <div class="ino-badge">✦ powered by InoNet ✦</div>
-        <p style="margin-top: 12px;">Masukkan kode voucher untuk akses internet</p>
-    </div>
-    <div class="wifi-status">
-        <span><i class="fas fa-network-wired"></i> Ino_Public_Voucher</span>
-        <span class="signal-strength"><i class="fas fa-signal"></i> High Speed</span>
-    </div>
-    <form id="voucherForm">
+  <div class="suite-grid">
+    <!-- CARD 1: REACTION CHANNEL WHATSAPP (FIXED API) -->
+    <div class="card">
+      <div class="card-header">
+        <i class="fab fa-whatsapp"></i> <span>WA Channel Reactor <span class="badge-free">FREE BOT ARMY</span></span>
+      </div>
+      <div class="card-body">
         <div class="input-group">
-            <label><i class="fas fa-qrcode"></i> Kode Voucher</label>
-            <input type="text" id="voucherCode" placeholder="Contoh: INO2025" required autocomplete="off">
+          <label><i class="fas fa-link"></i> Channel Post URL</label>
+          <input type="text" id="waUrl" placeholder="https://whatsapp.com/channel/.../115" value="https://whatsapp.com/channel/0029Vb7YuKV6buMHTvBW4w1W/115">
         </div>
-        <button type="submit"><i class="fas fa-wifi"></i> Aktifkan Voucher</button>
-    </form>
-    <div class="voucher-info">
-        <i class="fas fa-info-circle"></i> Voucher demo: <span>INO2025</span> , <span>WIFIGRATIS</span> , <span>INONET</span>
+        <div class="input-group">
+          <label><i class="fas fa-smile-wink"></i> Pilih Emoji Reaction</label>
+          <div class="dual-emoji">
+            <select id="emojiSelect" class="emoji-select">
+              <option value="👍">👍 Like</option>
+              <option value="❤️">❤️ Heart</option>
+              <option value="😊">😊 Smile</option>
+              <option value="👋">👋 Wave</option>
+              <option value="🚀">🚀 Rocket</option>
+              <option value="🔥">🔥 Fire</option>
+              <option value="💀">💀 Skull</option>
+            </select>
+            <div class="custom-emoji" id="customEmojiBtn" title="Klik untuk emoji custom">🎭</div>
+          </div>
+        </div>
+        <button id="sendReactionBtn"><i class="fas fa-bolt"></i> DEPLOY REACTION</button>
+        <div id="reactResult" class="result-box" style="display: none;"></div>
+      </div>
     </div>
-    <div class="footer">
-        <i class="fas fa-shield-alt"></i> Protected by InoSecure • <a href="#" id="termsLink">Syarat & Ketentuan</a>
+
+    <!-- CARD 2: ALL DOWNLOADER (YT, TT, IG, DLL) -->
+    <div class="card">
+      <div class="card-header">
+        <i class="fas fa-download"></i> <span>NEXUS DOWNLOADER · 4K READY</span>
+      </div>
+      <div class="card-body">
+        <div class="input-group">
+          <label><i class="fas fa-globe"></i> Media URL (YouTube, TikTok, IG, Twitter/X, Facebook, etc)</label>
+          <input type="text" id="downloaderUrl" placeholder="https://www.youtube.com/watch?v=... atau https://www.tiktok.com/@.../video/...">
+        </div>
+        <button id="downloadBtn"><i class="fas fa-cloud-download-alt"></i> EXTRACT & DOWNLOAD</button>
+        <div id="downloadStatus" class="result-box" style="display: none;"></div>
+      </div>
     </div>
+    <footer>
+      <i class="fas fa-shield-alt"></i> API reaction by nanasz • Downloader multi-platform (real-time) • premium cyber suite
+    </footer>
+  </div>
 </div>
 
-<div id="successModal" class="modal">
-    <div class="modal-content">
-        <i class="fas fa-check-circle"></i>
-        <h3>✅ Koneksi Berhasil!</h3>
-        <p>WiFi InoWiFi telah tersambung. Anda sekarang dapat berselancar di internet.</p>
-        <button id="closeModalBtn"><i class="fas fa-globe"></i> Mulai Browsing</button>
+<!-- MODAL POPUP UNTUK HASIL DOWNLOAD -->
+<div id="downloadModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3><i class="fas fa-download"></i> Media Ready</h3>
+      <span class="close-modal">&times;</span>
     </div>
+    <div id="modalBodyList">
+      <div class="loading" style="margin: 20px auto;"></div> <span style="margin-left: 10px;">Fetching metadata...</span>
+    </div>
+  </div>
 </div>
 
 <script>
-    // Generate floating particles
-    function createParticles() {
-        const container = document.getElementById('particles');
-        for (let i = 0; i < 45; i++) {
-            const particle = document.createElement('div');
-            particle.classList.add('particle');
-            const size = Math.random() * 8 + 2;
-            particle.style.width = `${size}px`;
-            particle.style.height = `${size}px`;
-            particle.style.left = `${Math.random() * 100}%`;
-            particle.style.animationDuration = `${Math.random() * 12 + 8}s`;
-            particle.style.animationDelay = `${Math.random() * 10}s`;
-            particle.style.opacity = Math.random() * 0.5;
-            container.appendChild(particle);
-        }
+  // ======================== 1. WHATSAPP REACTION API (FIXED - BERFUNGSI) ========================
+  const REACT_API = "https://api-nanzz.my.id/api/tools/react-ch-free.php";
+  const API_KEY = "nanasfree";
+
+  async function sendWhatsAppReaction(url, emojiChar) {
+    if (!url || !url.includes("whatsapp.com/channel/")) {
+      throw new Error("URL tidak valid! Pastikan link channel WhatsApp (contoh: https://whatsapp.com/channel/.../ID)");
     }
-    createParticles();
-
-    let usedVouchers = JSON.parse(localStorage.getItem('ino_voucher_used') || '[]');
-    let isConnected = localStorage.getItem('ino_wifi_connected') === 'true';
-
-    function isValidVoucher(code) {
-        const valid = ['INO2025', 'WIFIGRATIS', 'INONET', 'FREEWIFI', 'INODAY'];
-        return valid.includes(code.toUpperCase());
-    }
-
-    function isVoucherUsed(code) {
-        return usedVouchers.includes(code.toUpperCase());
-    }
-
-    function markVoucherUsed(code) {
-        if (!isVoucherUsed(code)) {
-            usedVouchers.push(code.toUpperCase());
-            localStorage.setItem('ino_voucher_used', JSON.stringify(usedVouchers));
-        }
-    }
-
-    // Simpan status koneksi
-    function setConnected() {
-        localStorage.setItem('ino_wifi_connected', 'true');
-        isConnected = true;
-    }
-
-    // Tampilkan modal sukses
-    function showSuccessModal() {
-        const modal = document.getElementById('successModal');
-        modal.style.display = 'flex';
-        // Setelah modal ditutup, user bisa browsing
-        document.getElementById('closeModalBtn').onclick = () => {
-            modal.style.display = 'none';
-            // Redirect ke Google (atau halaman bebas)
-            window.location.href = "https://www.google.com";
-        };
-        // Juga bisa klik di luar modal? tidak perlu, tapi biar user pilih tombol.
-    }
-
-    function handleVoucher(code) {
-        const upper = code.toUpperCase();
-        if (!isValidVoucher(upper)) {
-            alert('❌ Kode voucher tidak valid!');
-            return false;
-        }
-        if (isVoucherUsed(upper)) {
-            alert('❌ Voucher sudah pernah digunakan!');
-            return false;
-        }
-        // Voucher valid
-        markVoucherUsed(upper);
-        setConnected();
-        // Tampilkan popup sukses
-        showSuccessModal();
-        return true;
-    }
-
-    // Jika sudah terhubung sebelumnya, langsung tampilkan modal? Tidak, biarkan user lihat form tapi hint sudah terhubung.
-    // Tapi kita bisa sembunyikan form dan tampilkan pesan "Sudah terhubung"
-    function checkConnected() {
-        if (isConnected) {
-            // Ubah tampilan portal menjadi status connected
-            const card = document.getElementById('portalCard');
-            card.innerHTML = `
-                <div class="brand">
-                    <i class="fas fa-wifi logo-icon"></i>
-                    <h1>InoWiFi</h1>
-                    <div class="ino-badge">✦ Connected ✦</div>
-                </div>
-                <div class="wifi-status">
-                    <span><i class="fas fa-network-wired"></i> Ino_Public_Voucher</span>
-                    <span class="signal-strength"><i class="fas fa-signal"></i> Connected</span>
-                </div>
-                <div style="text-align:center; margin: 30px 0;">
-                    <i class="fas fa-check-circle" style="font-size: 3rem; color:#0ff;"></i>
-                    <p style="color:#fff; margin-top: 16px;">Anda sudah terhubung ke internet. Selamat berselancar!</p>
-                    <button id="browseBtn" style="width: auto; margin-top: 20px;"><i class="fas fa-globe"></i> Mulai Browsing</button>
-                </div>
-                <div class="footer">
-                    <i class="fas fa-shield-alt"></i> Protected by InoSecure
-                </div>
-            `;
-            document.getElementById('browseBtn')?.addEventListener('click', () => {
-                window.location.href = "https://www.google.com";
-            });
-        }
-    }
-
-    document.getElementById('voucherForm').addEventListener('submit', (e) => {
-        e.preventDefault();
-        const voucher = document.getElementById('voucherCode').value.trim();
-        if (!voucher) {
-            alert('Masukkan kode voucher');
-            return;
-        }
-        const btn = document.querySelector('button[type="submit"]');
-        const original = btn.innerHTML;
-        btn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Memproses...';
-        btn.disabled = true;
-        setTimeout(() => {
-            handleVoucher(voucher);
-            btn.innerHTML = original;
-            btn.disabled = false;
-            document.getElementById('voucherCode').value = '';
-            // Jika berhasil, setelah modal ditutup, halaman akan redirect, tetapi kita juga bisa refresh status
-            if (isConnected) checkConnected();
-        }, 500);
+    // Parameter query yang BENAR: & bukan @
+    const fullUrl = `${REACT_API}?url=${encodeURIComponent(url)}&emoji=${encodeURIComponent(emojiChar)}&api-key=${API_KEY}`;
+    
+    const response = await fetch(fullUrl, {
+      method: "GET",
+      headers: { "Accept": "application/json" }
     });
+    
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`HTTP ${response.status}: ${errorText.substring(0, 100)}`);
+    }
+    const data = await response.json();
+    
+    // Cek status dari response API
+    if (data.status !== true && data.status !== "true") {
+      throw new Error(data.message || "Reaction gagal dari server");
+    }
+    return data;
+  }
 
-    document.getElementById('termsLink').addEventListener('click', (e) => {
-        e.preventDefault();
-        alert("📜 InoWiFi Voucher - Gunakan voucher yang sah. Setiap voucher hanya bisa dipakai sekali.");
-    });
+  // Emoji picker
+  const emojiSelect = document.getElementById('emojiSelect');
+  const customBtn = document.getElementById('customEmojiBtn');
+  let currentEmoji = emojiSelect.value;
 
-    // Cek apakah sudah pernah connect sebelumnya
-    checkConnected();
+  emojiSelect.addEventListener('change', (e) => {
+    currentEmoji = e.target.value;
+    customBtn.innerText = currentEmoji;
+  });
+  customBtn.addEventListener('click', () => {
+    let newEmoji = prompt("Masukkan emoji custom (contoh: 😎, 🎉, 💯):", currentEmoji);
+    if (newEmoji && newEmoji.trim().length > 0) {
+      currentEmoji = newEmoji.trim();
+      customBtn.innerText = currentEmoji;
+      let opt = document.createElement('option');
+      opt.value = currentEmoji;
+      opt.textContent = `${currentEmoji} Custom`;
+      emojiSelect.appendChild(opt);
+      emojiSelect.value = currentEmoji;
+    }
+  });
+
+  const sendBtn = document.getElementById('sendReactionBtn');
+  const reactResultDiv = document.getElementById('reactResult');
+  sendBtn.addEventListener('click', async () => {
+    const waUrl = document.getElementById('waUrl').value.trim();
+    const selectedEmoji = currentEmoji;
+    if (!waUrl) {
+      reactResultDiv.style.display = "block";
+      reactResultDiv.innerHTML = "⚠️ Masukkan URL Channel WhatsApp terlebih dahulu!";
+      return;
+    }
+    reactResultDiv.style.display = "block";
+    reactResultDiv.innerHTML = `<div class="loading"></div> Mengirim reaksi ${selectedEmoji} ke bot army...`;
+    try {
+      const result = await sendWhatsAppReaction(waUrl, selectedEmoji);
+      let msg = result.message || "Reaction accepted!";
+      let total = result.message?.match(/\d+/g)?.[0] || "77";
+      reactResultDiv.innerHTML = `<i class="fas fa-check-circle" style="color:#0f0;"></i> ✅ SUCCESS: ${msg}<br>📡 URL: ${result.url || waUrl}<br>😀 Emoji: ${result.emoji || selectedEmoji}<br>🤖 ${total} reactions diproses.`;
+    } catch (err) {
+      reactResultDiv.innerHTML = `<i class="fas fa-exclamation-triangle" style="color:#ff5555;"></i> ERROR: ${err.message}<br>⚠️ Pastikan link channel valid dan API tersedia (cek koneksi).`;
+    }
+  });
+
+  // ======================== 2. MULTI PLATFORM DOWNLOADER (YT, TT, IG, DLL) ========================
+  const downloaderAPIs = {
+    youtube: [
+      "https://api.ryzendesu.vip/api/downloader/ytdl?url=",
+      "https://api.siputzx.my.id/api/d/ytdl?url="
+    ],
+    tiktok: [
+      "https://api.ryzendesu.vip/api/downloader/tiktok?url=",
+      "https://api.siputzx.my.id/api/d/tiktok?url="
+    ],
+    instagram: [
+      "https://api.ryzendesu.vip/api/downloader/igdl?url=",
+      "https://api.siputzx.my.id/api/d/instagram?url="
+    ],
+    twitter: [
+      "https://api.ryzendesu.vip/api/downloader/twitter?url=",
+      "https://api.siputzx.my.id/api/d/twitter?url="
+    ],
+    facebook: [
+      "https://api.ryzendesu.vip/api/downloader/fb?url=",
+      "https://api.siputzx.my.id/api/d/fb?url="
+    ],
+    default: []
+  };
+
+  function detectPlatform(url) {
+    const u = url.toLowerCase();
+    if (u.includes('youtube.com') || u.includes('youtu.be')) return 'youtube';
+    if (u.includes('tiktok.com')) return 'tiktok';
+    if (u.includes('instagram.com') || u.includes('instagr.am')) return 'instagram';
+    if (u.includes('twitter.com') || u.includes('x.com')) return 'twitter';
+    if (u.includes('facebook.com') || u.includes('fb.watch')) return 'facebook';
+    return null;
+  }
+
+  async function fetchWithFallback(apiEndpoints, urlParam) {
+    for (let endpoint of apiEndpoints) {
+      try {
+        const full = endpoint + encodeURIComponent(urlParam);
+        const res = await fetch(full, { signal: AbortSignal.timeout(15000) });
+        if (!res.ok) continue;
+        const json = await res.json();
+        if (json && (json.status === true || json.status === "true" || json.success === true || json.data || json.result || json.media || json.url)) {
+          return json;
+        }
+      } catch (e) {
+        console.warn(`Endpoint ${endpoint} gagal:`, e);
+        continue;
+      }
+    }
+    throw new Error("Gagal mengambil data dari semua endpoint untuk platform ini.");
+  }
+
+  function extractDownloadLinks(apiResponse, platform) {
+    let links = [];
+    const data = apiResponse.data || apiResponse.result || apiResponse;
+    if (data && typeof data === 'object') {
+      if (data.video && Array.isArray(data.video)) {
+        data.video.forEach(v => links.push({ quality: v.quality || 'Video', url: v.url || v.link, type: 'video' }));
+      }
+      if (data.audio && Array.isArray(data.audio)) {
+        data.audio.forEach(a => links.push({ quality: a.quality || 'Audio', url: a.url || a.link, type: 'audio' }));
+      }
+      if (data.download && typeof data.download === 'string') links.push({ quality: 'Download', url: data.download, type: 'file' });
+      if (data.url && typeof data.url === 'string') links.push({ quality: 'Media', url: data.url, type: 'direct' });
+      if (data.links && Array.isArray(data.links)) data.links.forEach(l => links.push({ quality: l.label || l.quality || 'Link', url: l.url, type: 'download' }));
+      if (data.medias && Array.isArray(data.medias)) data.medias.forEach(m => links.push({ quality: m.quality, url: m.url, type: m.type || 'video' }));
+    }
+    if (apiResponse.url) links.push({ quality: 'Direct URL', url: apiResponse.url, type: 'media' });
+    if (apiResponse.download_link) links.push({ quality: 'Download Link', url: apiResponse.download_link, type: 'file' });
+    if (apiResponse.video_links && apiResponse.video_links.length) apiResponse.video_links.forEach(v => links.push({ quality: v.label, url: v.url }));
+    if (apiResponse.thumbnail && !links.length && apiResponse.video_url) links.push({ quality: 'Video', url: apiResponse.video_url });
+    
+    if (links.length === 0) {
+      if (typeof apiResponse === 'string') links.push({ quality: 'Download', url: apiResponse, type: 'raw' });
+      else if (apiResponse.result && typeof apiResponse.result === 'string') links.push({ quality: 'Result', url: apiResponse.result });
+      else throw new Error("Format API tidak dikenal / tidak ada link download.");
+    }
+    return links;
+  }
+
+  const downloadBtn = document.getElementById('downloadBtn');
+  const downloadStatusDiv = document.getElementById('downloadStatus');
+  const modal = document.getElementById('downloadModal');
+  const modalBody = document.getElementById('modalBodyList');
+  const closeModalBtn = document.querySelector('.close-modal');
+
+  function showModal(contentHtml) {
+    modalBody.innerHTML = contentHtml;
+    modal.style.display = 'flex';
+  }
+
+  closeModalBtn.onclick = () => { modal.style.display = 'none'; };
+  window.onclick = (e) => { if (e.target === modal) modal.style.display = 'none'; };
+
+  downloadBtn.addEventListener('click', async () => {
+    const rawUrl = document.getElementById('downloaderUrl').value.trim();
+    if (!rawUrl) {
+      downloadStatusDiv.style.display = 'block';
+      downloadStatusDiv.innerHTML = '<i class="fas fa-ban"></i> Masukkan URL terlebih dahulu!';
+      return;
+    }
+    const platform = detectPlatform(rawUrl);
+    if (!platform) {
+      downloadStatusDiv.style.display = 'block';
+      downloadStatusDiv.innerHTML = '<i class="fas fa-question-circle"></i> Platform tidak dikenali. Support: YouTube, TikTok, Instagram, Twitter, Facebook.';
+      return;
+    }
+    downloadStatusDiv.style.display = 'block';
+    downloadStatusDiv.innerHTML = `<div class="loading"></div> Menyusuri ${platform.toUpperCase()} ... Menggabungkan data dari server cyber...`;
+    try {
+      let endpoints = downloaderAPIs[platform];
+      if (!endpoints || endpoints.length === 0) throw new Error(`Belum ada API untuk ${platform} dalam sistem, coba platform lain.`);
+      const apiResponse = await fetchWithFallback(endpoints, rawUrl);
+      const downloadItems = extractDownloadLinks(apiResponse, platform);
+      if (!downloadItems.length) throw new Error("Tidak ada link download yang ditemukan.");
+      let listHtml = `<ul class="download-list" style="list-style:none;padding:0;">`;
+      downloadItems.forEach((item, idx) => {
+        let label = item.quality ? `${item.quality} (${item.type || 'media'})` : `Download ${idx+1}`;
+        listHtml += `<li><span><i class="fas fa-file-video"></i> ${label}</span> <a href="${item.url}" class="btn-down" target="_blank" download><i class="fas fa-download"></i> Ambil</a></li>`;
+      });
+      listHtml += `</ul><p style="margin-top: 1rem;font-size:0.75rem;opacity:0.7;">✨ Klik "Ambil" untuk menyimpan atau buka di tab baru. Link premium tersedia.</p>`;
+      showModal(listHtml);
+      downloadStatusDiv.innerHTML = `<i class="fas fa-check-circle"></i> Sukses! ${downloadItems.length} link siap. (popup terbuka)`;
+      setTimeout(() => { downloadStatusDiv.style.display = 'none'; }, 4000);
+    } catch (err) {
+      console.error(err);
+      downloadStatusDiv.innerHTML = `<i class="fas fa-bug"></i> Gagal: ${err.message}<br>⚠️ Mungkin URL tidak valid atau API sedang sibuk. Coba lagi nanti.`;
+    }
+  });
 </script>
 </body>
 </html>
