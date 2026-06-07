@@ -337,7 +337,7 @@
   </div>
 
   <div class="suite-grid">
-    <!-- CARD 1: REACTION CHANNEL WHATSAPP (FIXED API) -->
+    <!-- CARD 1: REACTION CHANNEL WHATSAPP (FIX CORS) -->
     <div class="card">
       <div class="card-header">
         <i class="fab fa-whatsapp"></i> <span>WA Channel Reactor <span class="badge-free">FREE BOT ARMY</span></span>
@@ -401,33 +401,44 @@
 </div>
 
 <script>
-  // ======================== 1. WHATSAPP REACTION API (FIXED - BERFUNGSI) ========================
+  // ======================== 1. WHATSAPP REACTION API (CORS FIX - PROXY) ========================
   const REACT_API = "https://api-nanzz.my.id/api/tools/react-ch-free.php";
   const API_KEY = "nanasfree";
+  const CORS_PROXY = "https://corsproxy.io/?";  // Proxy gratis untuk bypass CORS
 
   async function sendWhatsAppReaction(url, emojiChar) {
     if (!url || !url.includes("whatsapp.com/channel/")) {
       throw new Error("URL tidak valid! Pastikan link channel WhatsApp (contoh: https://whatsapp.com/channel/.../ID)");
     }
-    // Parameter query yang BENAR: & bukan @
-    const fullUrl = `${REACT_API}?url=${encodeURIComponent(url)}&emoji=${encodeURIComponent(emojiChar)}&api-key=${API_KEY}`;
+    // Bangun URL asli
+    const targetUrl = `${REACT_API}?url=${encodeURIComponent(url)}&emoji=${encodeURIComponent(emojiChar)}&api-key=${API_KEY}`;
+    // Lewatkan proxy CORS
+    const proxiedUrl = CORS_PROXY + encodeURIComponent(targetUrl);
     
-    const response = await fetch(fullUrl, {
+    const response = await fetch(proxiedUrl, {
       method: "GET",
       headers: { "Accept": "application/json" }
     });
     
     if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`HTTP ${response.status}: ${errorText.substring(0, 100)}`);
+      throw new Error(`HTTP ${response.status} - ${response.statusText}`);
     }
     const data = await response.json();
     
-    // Cek status dari response API
-    if (data.status !== true && data.status !== "true") {
-      throw new Error(data.message || "Reaction gagal dari server");
+    // Beberapa proxy membungkus response, cek apakah ada properti 'contents'
+    let realData = data;
+    if (data.contents) {
+      try {
+        realData = JSON.parse(data.contents);
+      } catch(e) {
+        throw new Error("Gagal parse response dari proxy");
+      }
     }
-    return data;
+    
+    if (realData.status !== true && realData.status !== "true") {
+      throw new Error(realData.message || "Reaction gagal dari server");
+    }
+    return realData;
   }
 
   // Emoji picker
@@ -463,14 +474,14 @@
       return;
     }
     reactResultDiv.style.display = "block";
-    reactResultDiv.innerHTML = `<div class="loading"></div> Mengirim reaksi ${selectedEmoji} ke bot army...`;
+    reactResultDiv.innerHTML = `<div class="loading"></div> Mengirim reaksi ${selectedEmoji} ke bot army... (lewat proxy CORS)`;
     try {
       const result = await sendWhatsAppReaction(waUrl, selectedEmoji);
       let msg = result.message || "Reaction accepted!";
       let total = result.message?.match(/\d+/g)?.[0] || "77";
       reactResultDiv.innerHTML = `<i class="fas fa-check-circle" style="color:#0f0;"></i> ✅ SUCCESS: ${msg}<br>📡 URL: ${result.url || waUrl}<br>😀 Emoji: ${result.emoji || selectedEmoji}<br>🤖 ${total} reactions diproses.`;
     } catch (err) {
-      reactResultDiv.innerHTML = `<i class="fas fa-exclamation-triangle" style="color:#ff5555;"></i> ERROR: ${err.message}<br>⚠️ Pastikan link channel valid dan API tersedia (cek koneksi).`;
+      reactResultDiv.innerHTML = `<i class="fas fa-exclamation-triangle" style="color:#ff5555;"></i> ERROR: ${err.message}<br>⚠️ Pastikan link channel valid dan koneksi internet stabil.`;
     }
   });
 
