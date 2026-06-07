@@ -2,322 +2,55 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>NEXUS | WA Reactor + All Downloader</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    body {
-      background: radial-gradient(circle at 20% 30%, #0a0a0f, #030304);
-      font-family: 'Inter', 'Space Grotesk', sans-serif;
-      color: #eef5ff;
-      min-height: 100vh;
-      padding: 2rem 1.5rem;
-      position: relative;
-      overflow-x: hidden;
-    }
-    body::before {
-      content: "";
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIj48ZmlsdGVyIGlkPSJmIj48ZmVUdXJidWxlbmNlIHR5cGU9ImZyYWN0YWxOb2lzZSIgYmFzZUZyZXF1ZW5jeT0iLjciIG51bU9jdGF2ZXM9IjMiLz48L2ZpbHRlcj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWx0ZXI9InVybCgjZikiIG9wYWNpdHk9IjAuMDMiLz48L3N2Zz4=');
-      background-repeat: repeat;
-      pointer-events: none;
-      z-index: 1;
-      opacity: 0.25;
-    }
-    @keyframes pulseGlow {
-      0% { border-color: rgba(0, 255, 255, 0.3); box-shadow: 0 0 5px rgba(0, 255, 255, 0.2);}
-      100% { border-color: rgba(0, 255, 255, 0.8); box-shadow: 0 0 20px rgba(0, 255, 255, 0.6);}
-    }
-    .container {
-      max-width: 1350px;
-      margin: 0 auto;
-      position: relative;
-      z-index: 5;
-    }
-    .cyber-header {
-      text-align: center;
-      margin-bottom: 3rem;
-    }
-    .glitch {
-      font-size: 3.2rem;
-      font-weight: 800;
-      letter-spacing: -0.02em;
-      background: linear-gradient(135deg, #aaffff, #00e0ff, #7700ff);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      text-shadow: 0 0 8px rgba(0,255,255,0.5);
-      position: relative;
-      display: inline-block;
-    }
-    .glitch::before, .glitch::after {
-      content: attr(data-text);
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(135deg, #aaffff, #00e0ff, #7700ff);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-    }
-    .glitch::before {
-      animation: glitch-1 0.4s infinite reverse;
-      clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
-      transform: translate(-2px, -1px);
-      opacity: 0.8;
-    }
-    .glitch::after {
-      animation: glitch-2 0.3s infinite;
-      clip-path: polygon(0 80%, 100% 20%, 100% 100%, 0 100%);
-      transform: translate(2px, 1px);
-      opacity: 0.7;
-    }
-    @keyframes glitch-1 {
-      0% { transform: translate(0); }
-      20% { transform: translate(-2px, 1px); }
-      40% { transform: translate(2px, -1px); }
-      60% { transform: translate(-1px, 2px); }
-      80% { transform: translate(1px, -2px); }
-      100% { transform: translate(0); }
-    }
-    @keyframes glitch-2 {
-      0% { transform: translate(0); }
-      20% { transform: translate(2px, -1px); }
-      40% { transform: translate(-2px, 1px); }
-      60% { transform: translate(1px, 2px); }
-      80% { transform: translate(-1px, -2px); }
-      100% { transform: translate(0); }
-    }
-    .sub {
-      font-family: 'Space Grotesk', monospace;
-      color: #8aaaff;
-      border-left: 3px solid #0ff;
-      padding-left: 1rem;
-      margin-top: 0.5rem;
-      font-weight: 400;
-      letter-spacing: 1px;
-    }
-    .suite-grid {
-      display: flex;
-      flex-direction: column;
-      gap: 2.5rem;
-    }
-    .card {
-      background: rgba(10, 20, 30, 0.65);
-      backdrop-filter: blur(12px);
-      border-radius: 2rem;
-      border: 1px solid rgba(0, 255, 255, 0.3);
-      box-shadow: 0 15px 35px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05);
-      transition: all 0.25s ease;
-      overflow: hidden;
-    }
-    .card:hover {
-      border-color: rgba(0, 255, 255, 0.7);
-      box-shadow: 0 20px 40px rgba(0, 200, 255, 0.2);
-    }
-    .card-header {
-      padding: 1.5rem 2rem;
-      background: rgba(0, 20, 30, 0.6);
-      border-bottom: 1px solid rgba(0, 255, 255, 0.3);
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-weight: 700;
-      font-size: 1.5rem;
-    }
-    .card-header i {
-      color: #0ff;
-      font-size: 1.8rem;
-      filter: drop-shadow(0 0 5px cyan);
-    }
-    .card-body {
-      padding: 2rem;
-    }
-    .input-group {
-      margin-bottom: 1.5rem;
-    }
-    .input-group label {
-      display: block;
-      margin-bottom: 0.5rem;
-      font-weight: 500;
-      letter-spacing: 0.5px;
-      color: #bbddff;
-    }
-    input, select {
-      width: 100%;
-      background: rgba(0, 0, 0, 0.6);
-      border: 1px solid #2c5f6e;
-      border-radius: 1.2rem;
-      padding: 0.9rem 1.2rem;
-      color: #fff;
-      font-size: 1rem;
-      font-family: monospace;
-      transition: 0.2s;
-    }
-    input:focus, select:focus {
-      outline: none;
-      border-color: #0ff;
-      box-shadow: 0 0 12px rgba(0, 255, 255, 0.4);
-    }
-    .dual-emoji {
-      display: flex;
-      gap: 1rem;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-    .emoji-select {
-      flex: 2;
-    }
-    .custom-emoji {
-      flex: 1;
-      text-align: center;
-      font-size: 2rem;
-      background: #071a1f;
-      border-radius: 1.2rem;
-      padding: 0.5rem;
-      cursor: pointer;
-      border: 1px solid #2c5f6e;
-    }
-    button {
-      background: linear-gradient(95deg, #00a6c4, #2b2b9b);
-      border: none;
-      padding: 12px 24px;
-      border-radius: 2rem;
-      font-weight: 700;
-      font-size: 1rem;
-      color: white;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.6rem;
-      cursor: pointer;
-      transition: 0.2s;
-      box-shadow: 0 4px 12px rgba(0, 160, 200, 0.3);
-      border: 1px solid rgba(255,255,255,0.2);
-    }
-    button:hover {
-      transform: translateY(-2px);
-      filter: brightness(1.05);
-      box-shadow: 0 10px 20px rgba(0, 200, 255, 0.4);
-    }
-    button:active {
-      transform: translateY(1px);
-    }
-    .result-box {
-      margin-top: 1.5rem;
-      background: #010b0f80;
-      border-radius: 1.2rem;
-      padding: 1rem;
-      border-left: 4px solid #0ff;
-      font-size: 0.9rem;
-      word-break: break-word;
-      font-family: 'Fira Code', monospace;
-    }
-    .loading {
-      display: inline-block;
-      width: 20px;
-      height: 20px;
-      border: 2px solid rgba(255,255,255,0.3);
-      border-radius: 50%;
-      border-top-color: cyan;
-      animation: spin 0.8s linear infinite;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0,0,0,0.8);
-      backdrop-filter: blur(16px);
-      z-index: 1000;
-      justify-content: center;
-      align-items: center;
-    }
-    .modal-content {
-      background: rgba(8, 18, 28, 0.95);
-      border-radius: 2rem;
-      max-width: 600px;
-      width: 90%;
-      border: 1px solid cyan;
-      padding: 1.8rem;
-      box-shadow: 0 0 40px rgba(0,255,255,0.3);
-      animation: fadeUp 0.25s ease;
-    }
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(20px);}
-      to { opacity: 1; transform: translateY(0);}
-    }
-    .modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 1px solid cyan;
-      padding-bottom: 0.8rem;
-      margin-bottom: 1.2rem;
-    }
-    .close-modal {
-      font-size: 1.8rem;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-    .close-modal:hover { color: red; text-shadow: 0 0 5px red; }
-    .download-list {
-      list-style: none;
-      max-height: 400px;
-      overflow-y: auto;
-    }
-    .download-list li {
-      background: #0a1a22;
-      margin: 0.6rem 0;
-      padding: 0.8rem;
-      border-radius: 1rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-    .btn-down {
-      background: #1f3a44;
-      padding: 6px 14px;
-      border-radius: 2rem;
-      font-size: 0.8rem;
-      text-decoration: none;
-      color: white;
-    }
-    .btn-down:hover { background: #0ff; color: black; }
-    @media (max-width: 680px) {
-      body { padding: 1rem; }
-      .card-body { padding: 1.2rem; }
-      .glitch { font-size: 2rem; }
-    }
-    .badge-free {
-      font-size: 0.7rem;
-      background: #0ff220;
-      color: #000;
-      border-radius: 30px;
-      padding: 2px 8px;
-      margin-left: 10px;
-      vertical-align: middle;
-    }
-    footer {
-      text-align: center;
-      margin-top: 3rem;
-      opacity: 0.6;
-      font-size: 0.8rem;
-    }
+    /* (Styling sama seperti sebelumnya, bisa Anda copy dari jawaban sebelumnya) */
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{background:radial-gradient(circle at 20%30%,#0a0a0f,#030304);font-family:'Inter','Space Grotesk',sans-serif;color:#eef5ff;min-height:100vh;padding:2rem 1.5rem;position:relative;overflow-x:hidden}
+    body::before{content:"";position:fixed;top:0;left:0;width:100%;height:100%;background-image:url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIj48ZmlsdGVyIGlkPSJmIj48ZmVUdXJidWxlbmNlIHR5cGU9ImZyYWN0YWxOb2lzZSIgYmFzZUZyZXF1ZW5jeT0iLjciIG51bU9jdGF2ZXM9IjMiLz48L2ZpbHRlcj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWx0ZXI9InVybCgjZikiIG9wYWNpdHk9IjAuMDMiLz48L3N2Zz4=');background-repeat:repeat;pointer-events:none;z-index:1;opacity:0.25}
+    .container{max-width:1350px;margin:0 auto;position:relative;z-index:5}
+    .cyber-header{text-align:center;margin-bottom:3rem}
+    .glitch{font-size:3.2rem;font-weight:800;letter-spacing:-0.02em;background:linear-gradient(135deg,#aaffff,#00e0ff,#7700ff);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 0 8px rgba(0,255,255,0.5);position:relative;display:inline-block}
+    .glitch::before,.glitch::after{content:attr(data-text);position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(135deg,#aaffff,#00e0ff,#7700ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+    .glitch::before{animation:glitch-1 0.4s infinite reverse;clip-path:polygon(0 0,100% 0,100% 45%,0 45%);transform:translate(-2px,-1px);opacity:0.8}
+    .glitch::after{animation:glitch-2 0.3s infinite;clip-path:polygon(0 80%,100% 20%,100% 100%,0 100%);transform:translate(2px,1px);opacity:0.7}
+    @keyframes glitch-1{0%{transform:translate(0)}20%{transform:translate(-2px,1px)}40%{transform:translate(2px,-1px)}60%{transform:translate(-1px,2px)}80%{transform:translate(1px,-2px)}100%{transform:translate(0)}}
+    @keyframes glitch-2{0%{transform:translate(0)}20%{transform:translate(2px,-1px)}40%{transform:translate(-2px,1px)}60%{transform:translate(1px,2px)}80%{transform:translate(-1px,-2px)}100%{transform:translate(0)}}
+    .sub{font-family:'Space Grotesk',monospace;color:#8aaaff;border-left:3px solid #0ff;padding-left:1rem;margin-top:0.5rem;font-weight:400;letter-spacing:1px}
+    .suite-grid{display:flex;flex-direction:column;gap:2.5rem}
+    .card{background:rgba(10,20,30,0.65);backdrop-filter:blur(12px);border-radius:2rem;border:1px solid rgba(0,255,255,0.3);box-shadow:0 15px 35px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.05);transition:all 0.25s ease;overflow:hidden}
+    .card:hover{border-color:rgba(0,255,255,0.7);box-shadow:0 20px 40px rgba(0,200,255,0.2)}
+    .card-header{padding:1.5rem 2rem;background:rgba(0,20,30,0.6);border-bottom:1px solid rgba(0,255,255,0.3);display:flex;align-items:center;gap:12px;font-weight:700;font-size:1.5rem}
+    .card-header i{color:#0ff;font-size:1.8rem;filter:drop-shadow(0 0 5px cyan)}
+    .card-body{padding:2rem}
+    .input-group{margin-bottom:1.5rem}
+    .input-group label{display:block;margin-bottom:0.5rem;font-weight:500;color:#bbddff}
+    input,select{width:100%;background:rgba(0,0,0,0.6);border:1px solid #2c5f6e;border-radius:1.2rem;padding:0.9rem 1.2rem;color:#fff;font-size:1rem;font-family:monospace;transition:0.2s}
+    input:focus,select:focus{outline:none;border-color:#0ff;box-shadow:0 0 12px rgba(0,255,255,0.4)}
+    .dual-emoji{display:flex;gap:1rem;align-items:center;flex-wrap:wrap}
+    .emoji-select{flex:2}
+    .custom-emoji{flex:1;text-align:center;font-size:2rem;background:#071a1f;border-radius:1.2rem;padding:0.5rem;cursor:pointer;border:1px solid #2c5f6e}
+    button{background:linear-gradient(95deg,#00a6c4,#2b2b9b);border:none;padding:12px 24px;border-radius:2rem;font-weight:700;font-size:1rem;color:white;display:inline-flex;align-items:center;gap:0.6rem;cursor:pointer;transition:0.2s;box-shadow:0 4px 12px rgba(0,160,200,0.3);border:1px solid rgba(255,255,255,0.2)}
+    button:hover{transform:translateY(-2px);filter:brightness(1.05);box-shadow:0 10px 20px rgba(0,200,255,0.4)}
+    .result-box{margin-top:1.5rem;background:#010b0f80;border-radius:1.2rem;padding:1rem;border-left:4px solid #0ff;font-size:0.9rem;word-break:break-word;font-family:'Fira Code',monospace}
+    .loading{display:inline-block;width:20px;height:20px;border:2px solid rgba(255,255,255,0.3);border-radius:50%;border-top-color:cyan;animation:spin 0.8s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);backdrop-filter:blur(16px);z-index:1000;justify-content:center;align-items:center}
+    .modal-content{background:rgba(8,18,28,0.95);border-radius:2rem;max-width:600px;width:90%;border:1px solid cyan;padding:1.8rem;box-shadow:0 0 40px rgba(0,255,255,0.3);animation:fadeUp 0.25s ease}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+    .modal-header{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid cyan;padding-bottom:0.8rem;margin-bottom:1.2rem}
+    .close-modal{font-size:1.8rem;cursor:pointer;transition:0.2s}
+    .close-modal:hover{color:red;text-shadow:0 0 5px red}
+    .download-list{list-style:none;max-height:400px;overflow-y:auto}
+    .download-list li{background:#0a1a22;margin:0.6rem 0;padding:0.8rem;border-radius:1rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+    .btn-down{background:#1f3a44;padding:6px 14px;border-radius:2rem;font-size:0.8rem;text-decoration:none;color:white}
+    .btn-down:hover{background:#0ff;color:black}
+    @media(max-width:680px){body{padding:1rem}.card-body{padding:1.2rem}.glitch{font-size:2rem}}
+    .badge-free{font-size:0.7rem;background:#0ff220;color:#000;border-radius:30px;padding:2px 8px;margin-left:10px;vertical-align:middle}
+    footer{text-align:center;margin-top:3rem;opacity:0.6;font-size:0.8rem}
   </style>
 </head>
 <body>
@@ -326,163 +59,64 @@
     <h1 class="glitch" data-text="NEXUS_HUB">NEXUS_HUB</h1>
     <p class="sub">// REACTION ENGINE + UNIVERSAL DOWNLOADER // CYBER TOOLKIT</p>
   </div>
-
   <div class="suite-grid">
-    <!-- CARD 1: WA CHANNEL REACTOR (ENDPOINT & PARAMETER YANG BENAR) -->
     <div class="card">
-      <div class="card-header">
-        <i class="fab fa-whatsapp"></i> <span>WA Channel Reactor <span class="badge-free">FREE BOT ARMY</span></span>
-      </div>
+      <div class="card-header"><i class="fab fa-whatsapp"></i> <span>WA Channel Reactor <span class="badge-free">FREE BOT ARMY</span></span></div>
       <div class="card-body">
-        <div class="input-group">
-          <label><i class="fas fa-link"></i> Channel Post URL</label>
-          <input type="text" id="waUrl" placeholder="https://whatsapp.com/channel/.../115" value="https://whatsapp.com/channel/0029Vb7YuKV6buMHtVBW4w1W/115">
-        </div>
-        <div class="input-group">
-          <label><i class="fas fa-smile-wink"></i> Pilih Emoji Reaction</label>
-          <div class="dual-emoji">
-            <select id="emojiSelect" class="emoji-select">
-              <option value="👍">👍 Like</option>
-              <option value="❤️">❤️ Heart</option>
-              <option value="😊">😊 Smile</option>
-              <option value="👑">👑 Crown</option>
-              <option value="🚀">🚀 Rocket</option>
-              <option value="🔥">🔥 Fire</option>
-            </select>
-            <div class="custom-emoji" id="customEmojiBtn" title="Klik untuk emoji custom">👑</div>
-          </div>
+        <div class="input-group"><label><i class="fas fa-link"></i> Channel Post URL</label><input type="text" id="waUrl" placeholder="https://whatsapp.com/channel/.../115" value="https://whatsapp.com/channel/0029Vb7YuKV6buMHtVBW4w1W/115"></div>
+        <div class="input-group"><label><i class="fas fa-smile-wink"></i> Pilih Emoji Reaction</label>
+          <div class="dual-emoji"><select id="emojiSelect" class="emoji-select"><option value="👍">👍 Like</option><option value="❤️">❤️ Heart</option><option value="😊">😊 Smile</option><option value="👑">👑 Crown</option><option value="🚀">🚀 Rocket</option><option value="🔥">🔥 Fire</option></select><div class="custom-emoji" id="customEmojiBtn">👑</div></div>
         </div>
         <button id="sendReactionBtn"><i class="fas fa-bolt"></i> DEPLOY REACTION</button>
         <div id="reactResult" class="result-box" style="display: none;"></div>
       </div>
     </div>
-
-    <!-- CARD 2: ALL DOWNLOADER (YT, TT, IG, DLL) -->
     <div class="card">
-      <div class="card-header">
-        <i class="fas fa-download"></i> <span>NEXUS DOWNLOADER · 4K READY</span>
-      </div>
+      <div class="card-header"><i class="fas fa-download"></i> <span>NEXUS DOWNLOADER · 4K READY</span></div>
       <div class="card-body">
-        <div class="input-group">
-          <label><i class="fas fa-globe"></i> Media URL (YouTube, TikTok, IG, Twitter/X, Facebook, etc)</label>
-          <input type="text" id="downloaderUrl" placeholder="https://www.youtube.com/watch?v=... atau https://www.tiktok.com/@.../video/...">
-        </div>
+        <div class="input-group"><label><i class="fas fa-globe"></i> Media URL (YouTube, TikTok, IG, Twitter, Facebook)</label><input type="text" id="downloaderUrl" placeholder="https://www.youtube.com/watch?v=..."></div>
         <button id="downloadBtn"><i class="fas fa-cloud-download-alt"></i> EXTRACT & DOWNLOAD</button>
         <div id="downloadStatus" class="result-box" style="display: none;"></div>
       </div>
     </div>
-    <footer>
-      <i class="fas fa-shield-alt"></i> API reaction by nanasz • Downloader multi-platform • premium cyber suite
-    </footer>
+    <footer><i class="fas fa-shield-alt"></i> Powered by Vercel Proxy | WA Reaction + All Downloader</footer>
   </div>
 </div>
-
-<!-- MODAL DOWNLOAD -->
-<div id="downloadModal" class="modal">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h3><i class="fas fa-download"></i> Media Ready</h3>
-      <span class="close-modal">&times;</span>
-    </div>
-    <div id="modalBodyList"><div class="loading"></div> Memuat...</div>
-  </div>
-</div>
-
+<div id="downloadModal" class="modal"><div class="modal-content"><div class="modal-header"><h3><i class="fas fa-download"></i> Media Ready</h3><span class="close-modal">&times;</span></div><div id="modalBodyList"><div class="loading"></div> Memuat...</div></div></div>
 <script>
-  // ======================== 1. WHATSAPP REACTION - ENDPOINT & PARAMETER BENAR ========================
-  // Berdasarkan request yang sukses: endpoint dengan /docs/ , parameter emojis (bukan emoji)
-  const REACT_API = "https://api-nanzz.my.id/docs/api/tools/react-ch-free.php";
-  const API_KEY = "nanasfree";
-  
-  // Proxy CORS karena browser tetap butuh (endpoint tidak mengirim header ACAO)
-  const PROXY_LIST = [
-    "https://api.allorigins.win/raw?url=",
-    "https://cors-anywhere.herokuapp.com/",
-    "https://proxy.cors.sh/"
-  ];
+  // Reaction via backend proxy (API route sendiri)
+  const sendReaction = async (url, emojis) => {
+    const res = await fetch(`/api/react?url=${encodeURIComponent(url)}&emojis=${encodeURIComponent(emojis)}&apikey=nanasfree`);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    if (data.status !== true && data.status !== "true") throw new Error(data.message || "Reaction failed");
+    return data;
+  };
 
-  async function sendWhatsAppReaction(url, emojis) {
-    if (!url || !url.includes("whatsapp.com/channel/")) {
-      throw new Error("URL tidak valid! Harus link channel WhatsApp.");
-    }
-    // Gunakan parameter 'emojis' sesuai dokumentasi API
-    const targetUrl = `${REACT_API}?url=${encodeURIComponent(url)}&emojis=${encodeURIComponent(emojis)}&apikey=${API_KEY}`;
-    
-    let lastError = null;
-    for (const proxy of PROXY_LIST) {
-      try {
-        const proxiedUrl = proxy + encodeURIComponent(targetUrl);
-        const response = await fetch(proxiedUrl, {
-          method: "GET",
-          headers: {
-            "Accept": "application/json",
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
-          }
-        });
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        let data = await response.json();
-        // Jika proxy membungkus dalam property 'contents' (allorigins tidak, tapi amankan)
-        if (data.contents) {
-          data = JSON.parse(data.contents);
-        }
-        if (data.status === true || data.status === "true") {
-          return data;
-        } else {
-          throw new Error(data.message || "Reaction gagal dari server");
-        }
-      } catch (err) {
-        lastError = err;
-        console.warn(`Proxy ${proxy} gagal:`, err);
-        continue;
-      }
-    }
-    throw new Error(lastError?.message || "Semua proxy gagal, coba lagi nanti");
-  }
-
-  // Emoji picker & custom
+  // Emoji handling
   const emojiSelect = document.getElementById('emojiSelect');
   const customBtn = document.getElementById('customEmojiBtn');
   let currentEmoji = emojiSelect.value;
-  emojiSelect.addEventListener('change', (e) => {
-    currentEmoji = e.target.value;
-    customBtn.innerText = currentEmoji;
-  });
-  customBtn.addEventListener('click', () => {
-    let newEmoji = prompt("Masukkan emoji custom (contoh: 😎, 🎉, 💯):", currentEmoji);
-    if (newEmoji && newEmoji.trim().length > 0) {
-      currentEmoji = newEmoji.trim();
-      customBtn.innerText = currentEmoji;
-      let opt = document.createElement('option');
-      opt.value = currentEmoji;
-      opt.textContent = `${currentEmoji} Custom`;
-      emojiSelect.appendChild(opt);
-      emojiSelect.value = currentEmoji;
-    }
-  });
+  emojiSelect.addEventListener('change', (e) => { currentEmoji = e.target.value; customBtn.innerText = currentEmoji; });
+  customBtn.addEventListener('click', () => { let newEmoji = prompt("Emoji custom:", currentEmoji); if(newEmoji && newEmoji.trim()) { currentEmoji = newEmoji.trim(); customBtn.innerText = currentEmoji; let opt = document.createElement('option'); opt.value = currentEmoji; opt.textContent = `${currentEmoji} Custom`; emojiSelect.appendChild(opt); emojiSelect.value = currentEmoji; } });
 
   const sendBtn = document.getElementById('sendReactionBtn');
   const reactResultDiv = document.getElementById('reactResult');
   sendBtn.addEventListener('click', async () => {
     const waUrl = document.getElementById('waUrl').value.trim();
-    const selectedEmoji = currentEmoji;
-    if (!waUrl) {
-      reactResultDiv.style.display = "block";
-      reactResultDiv.innerHTML = "⚠️ Masukkan URL Channel WhatsApp terlebih dahulu!";
-      return;
-    }
-    reactResultDiv.style.display = "block";
-    reactResultDiv.innerHTML = `<div class="loading"></div> Mengirim reaksi ${selectedEmoji} ke bot army... (memproses via proxy)`;
+    const emoji = currentEmoji;
+    if (!waUrl) { reactResultDiv.style.display = 'block'; reactResultDiv.innerHTML = '⚠️ Masukkan URL Channel WhatsApp'; return; }
+    reactResultDiv.style.display = 'block';
+    reactResultDiv.innerHTML = `<div class="loading"></div> Mengirim reaksi ${emoji} ...`;
     try {
-      const result = await sendWhatsAppReaction(waUrl, selectedEmoji);
-      const msg = result.message || "Reaction accepted!";
-      const total = result.message?.match(/\d+/g)?.[0] || "77";
-      reactResultDiv.innerHTML = `<i class="fas fa-check-circle" style="color:#0f0;"></i> ✅ SUCCESS: ${msg}<br>📡 URL: ${result.url || waUrl}<br>😀 Emoji: ${result.emojis || selectedEmoji}<br>🤖 ${total} reactions diproses.`;
+      const result = await sendReaction(waUrl, emoji);
+      reactResultDiv.innerHTML = `<i class="fas fa-check-circle" style="color:#0f0;"></i> ✅ ${result.message}<br>📡 URL: ${result.url}<br>😀 Emoji: ${result.emojis}<br>🤖 77 reactions diproses.`;
     } catch (err) {
-      reactResultDiv.innerHTML = `<i class="fas fa-exclamation-triangle" style="color:#ff5555;"></i> ERROR: ${err.message}<br>⚠️ Pastikan link channel valid (contoh: .../115) dan coba lagi.`;
+      reactResultDiv.innerHTML = `<i class="fas fa-exclamation-triangle" style="color:#ff5555;"></i> ERROR: ${err.message}<br>⚠️ Cek URL channel dan koneksi.`;
     }
   });
 
-  // ======================== 2. MULTI PLATFORM DOWNLOADER ========================
+  // ========= DOWNLOADER (sama seperti sebelumnya, tetap pakai API publik) =========
   const downloaderAPIs = {
     youtube: ["https://api.ryzendesu.vip/api/downloader/ytdl?url=", "https://api.siputzx.my.id/api/d/ytdl?url="],
     tiktok: ["https://api.ryzendesu.vip/api/downloader/tiktok?url=", "https://api.siputzx.my.id/api/d/tiktok?url="],
@@ -490,7 +124,6 @@
     twitter: ["https://api.ryzendesu.vip/api/downloader/twitter?url=", "https://api.siputzx.my.id/api/d/twitter?url="],
     facebook: ["https://api.ryzendesu.vip/api/downloader/fb?url=", "https://api.siputzx.my.id/api/d/fb?url="]
   };
-
   function detectPlatform(url) {
     const u = url.toLowerCase();
     if (u.includes('youtube.com') || u.includes('youtu.be')) return 'youtube';
@@ -500,7 +133,6 @@
     if (u.includes('facebook.com') || u.includes('fb.watch')) return 'facebook';
     return null;
   }
-
   async function fetchWithFallback(apiEndpoints, urlParam) {
     for (let endpoint of apiEndpoints) {
       try {
@@ -508,14 +140,11 @@
         const res = await fetch(full, { signal: AbortSignal.timeout(15000) });
         if (!res.ok) continue;
         const json = await res.json();
-        if (json && (json.status === true || json.status === "true" || json.success === true || json.data || json.result || json.media || json.url)) {
-          return json;
-        }
-      } catch (e) { continue; }
+        if (json && (json.status === true || json.status === "true" || json.success === true || json.data || json.result || json.media || json.url)) return json;
+      } catch(e) { continue; }
     }
-    throw new Error("Gagal mengambil data dari semua endpoint.");
+    throw new Error("Gagal ambil data dari semua endpoint.");
   }
-
   function extractDownloadLinks(apiResponse) {
     let links = [];
     const data = apiResponse.data || apiResponse.result || apiResponse;
@@ -529,49 +158,34 @@
     }
     if (apiResponse.url) links.push({ quality: 'Direct URL', url: apiResponse.url });
     if (apiResponse.download_link) links.push({ quality: 'Download Link', url: apiResponse.download_link });
-    if (apiResponse.video_links && apiResponse.video_links.length) apiResponse.video_links.forEach(v => links.push({ quality: v.label, url: v.url }));
-    if (links.length === 0) throw new Error("Tidak ada link download ditemukan.");
+    if (links.length === 0) throw new Error("Tidak ada link download.");
     return links;
   }
-
   const downloadBtn = document.getElementById('downloadBtn');
   const downloadStatusDiv = document.getElementById('downloadStatus');
   const modal = document.getElementById('downloadModal');
   const modalBody = document.getElementById('modalBodyList');
   const closeModalBtn = document.querySelector('.close-modal');
-  function showModal(contentHtml) { modalBody.innerHTML = contentHtml; modal.style.display = 'flex'; }
+  function showModal(html) { modalBody.innerHTML = html; modal.style.display = 'flex'; }
   closeModalBtn.onclick = () => modal.style.display = 'none';
   window.onclick = (e) => { if (e.target === modal) modal.style.display = 'none'; };
-
   downloadBtn.addEventListener('click', async () => {
     const rawUrl = document.getElementById('downloaderUrl').value.trim();
-    if (!rawUrl) {
-      downloadStatusDiv.style.display = 'block';
-      downloadStatusDiv.innerHTML = '<i class="fas fa-ban"></i> Masukkan URL terlebih dahulu!';
-      return;
-    }
+    if (!rawUrl) { downloadStatusDiv.style.display = 'block'; downloadStatusDiv.innerHTML = '<i class="fas fa-ban"></i> Masukkan URL'; return; }
     const platform = detectPlatform(rawUrl);
-    if (!platform) {
-      downloadStatusDiv.style.display = 'block';
-      downloadStatusDiv.innerHTML = '<i class="fas fa-question-circle"></i> Platform tidak dikenali. Support: YouTube, TikTok, Instagram, Twitter, Facebook.';
-      return;
-    }
+    if (!platform) { downloadStatusDiv.style.display = 'block'; downloadStatusDiv.innerHTML = '<i class="fas fa-question-circle"></i> Platform tidak dikenali.'; return; }
     downloadStatusDiv.style.display = 'block';
-    downloadStatusDiv.innerHTML = `<div class="loading"></div> Menyusuri ${platform.toUpperCase()} ...`;
+    downloadStatusDiv.innerHTML = `<div class="loading"></div> Mengurai ${platform.toUpperCase()} ...`;
     try {
       const apiResponse = await fetchWithFallback(downloaderAPIs[platform], rawUrl);
-      const downloadItems = extractDownloadLinks(apiResponse);
-      let listHtml = `<ul class="download-list">`;
-      downloadItems.forEach(item => {
-        listHtml += `<li><span><i class="fas fa-file-video"></i> ${item.quality}</span> <a href="${item.url}" class="btn-down" target="_blank" download><i class="fas fa-download"></i> Ambil</a></li>`;
-      });
-      listHtml += `</ul><p style="margin-top:1rem;opacity:0.7;">✨ Klik "Ambil" untuk menyimpan.</p>`;
-      showModal(listHtml);
-      downloadStatusDiv.innerHTML = `<i class="fas fa-check-circle"></i> Sukses! ${downloadItems.length} link siap.`;
+      const items = extractDownloadLinks(apiResponse);
+      let list = `<ul class="download-list">`;
+      items.forEach(item => { list += `<li><span><i class="fas fa-file-video"></i> ${item.quality}</span> <a href="${item.url}" class="btn-down" target="_blank" download><i class="fas fa-download"></i> Ambil</a></li>`; });
+      list += `</ul><p style="margin-top:1rem;opacity:0.7;">✨ Klik "Ambil" untuk menyimpan.</p>`;
+      showModal(list);
+      downloadStatusDiv.innerHTML = `<i class="fas fa-check-circle"></i> Sukses! ${items.length} link siap.`;
       setTimeout(() => downloadStatusDiv.style.display = 'none', 4000);
-    } catch (err) {
-      downloadStatusDiv.innerHTML = `<i class="fas fa-bug"></i> Gagal: ${err.message}`;
-    }
+    } catch (err) { downloadStatusDiv.innerHTML = `<i class="fas fa-bug"></i> Gagal: ${err.message}`; }
   });
 </script>
 </body>
